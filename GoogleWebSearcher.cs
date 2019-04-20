@@ -7,13 +7,13 @@ using Google.Apis.Services;
 
 namespace CustomSearch
 {
-    class GoogleWebSearcher
+    class GoogleWebSearcher : WebSearcher
     {
         private string googleSubscriptionKey = System.Configuration.ConfigurationManager.AppSettings["googleSubscriptionKey"];
         private string googleSearchEngineId = System.Configuration.ConfigurationManager.AppSettings["googleSearchEngineId"];
         private string googleAppName = System.Configuration.ConfigurationManager.AppSettings["googleAppName"];
 
-        public List<SearchResult> Search(string keyword, int resultCount)
+        public override List<SearchResult> Search(string keyword, int resultCount)
         {
             using (CustomsearchService Service = new CustomsearchService(
             new BaseClientService.Initializer

@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace CustomSearch
 {
-    class YandexWebSearcher
+    class YandexWebSearcher : WebSearcher
     {
         private string yandexSubscriptionKey = System.Configuration.ConfigurationManager.AppSettings["yandexSubscriptionKey"];
         private string yandexLogin = System.Configuration.ConfigurationManager.AppSettings["yandexUser"];
         private string template = @"https://yandex.com/search/xml?query={0}&l10n=en&user={1}&key={2}&count={3}";
 
-        public List<SearchResult> Search(string keyword, int resultCount)
+        public override List<SearchResult> Search(string keyword, int resultCount)
         {
             string completeUrl = string.Format(template, keyword, yandexLogin, yandexSubscriptionKey, resultCount);
 

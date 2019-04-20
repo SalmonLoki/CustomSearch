@@ -8,13 +8,13 @@ using System.Net;
 
 namespace CustomSearch
 {
-    class BingWebSearcher
+    class BingWebSearcher : WebSearcher
     {
         private string bingSubscriptionKey = System.Configuration.ConfigurationManager.AppSettings["bingSubscriptionKey"];
         private string bingCustomConfig = System.Configuration.ConfigurationManager.AppSettings["bingCustomConfig"];
         private string template = @"https://api.cognitive.microsoft.com/bingcustomsearch/v7.0/search?q={0}&customconfig={1}&count={2}&offset=0";
 
-        public List<SearchResult> Search(string keyword, int resultCount)
+        public override List<SearchResult> Search(string keyword, int resultCount)
         {
             string JsonString = null;
             string url = string.Format(template, keyword, bingCustomConfig, resultCount);
