@@ -9,8 +9,7 @@ namespace CustomSearch
 {
     class DBConnector
     {
-        string connectionString = ConfigurationManager.ConnectionStrings["CustomSearch.Properties.Settings.CustomSearchDBConnectionString"].ConnectionString;
-
+        private string connectionString = ConfigurationManager.ConnectionStrings["CustomSearch.Properties.Settings.CustomSearchDBConnectionString"].ConnectionString;
 
         public List<SearchResult> getOldResultsFromDB()
         {
