@@ -1,10 +1,10 @@
 ### Сборка
 * Создать БД из [script.sql](https://github.com/SalmonLoki/CustomSearch/blob/master/script.sql)
-* Изменить значение параметра *Data Source* строки *connectionString* в [App.config](https://github.com/SalmonLoki/CustomSearch/blob/master/CustomSearch/App.config),
+* Изменить значение параметра *Data Source* строки *connectionString* в [App.config](https://github.com/SalmonLoki/CustomSearch/blob/master/App.config),
 используя синтаксис *имя_сервера\имя_экземпляра*
 * Добавить свои значения *bingSubscriptionKey*, *bingCustomConfig*, *yandexSubscriptionKey*, *yandexUser*, 
 *googleSubscriptionKey*, *googleSearchEngineId*, *googleAppName*
-в в [App.config](https://github.com/SalmonLoki/CustomSearch/blob/master/CustomSearch/App.config)
+в в [App.config](https://github.com/SalmonLoki/CustomSearch/blob/master/App.config)
 * Собрать проект
 
 --------------------------------------------------------------------------------
