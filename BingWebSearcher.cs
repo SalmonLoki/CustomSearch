@@ -4,24 +4,25 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Configuration;
 
 
 namespace CustomSearch
 {
     class BingWebSearcher : WebSearcher
     {
-        private string bingSubscriptionKey = System.Configuration.ConfigurationManager.AppSettings["bingSubscriptionKey"];
-        private string bingCustomConfig = System.Configuration.ConfigurationManager.AppSettings["bingCustomConfig"];
+        private string subscriptionKey = ConfigurationManager.AppSettings["bingSubscriptionKey"];
+        private string customConfigurationID = ConfigurationManager.AppSettings["bingCustomConfig"];
         private string template = @"https://api.cognitive.microsoft.com/bingcustomsearch/v7.0/search?q={0}&customconfig={1}&count={2}&offset=0";
 
         public override List<SearchResult> Search(string keyword, int resultCount)
         {
             string JsonString = null;
-            string url = string.Format(template, keyword, bingCustomConfig, resultCount);
+            string url = string.Format(template, keyword, customConfigurationID, resultCount);
 
             using (var client = new WebClient())
             {
-                client.Headers["Ocp-Apim-Subscription-Key"] = bingSubscriptionKey;
+                client.Headers["Ocp-Apim-Subscription-Key"] = subscriptionKey;
 
                 HtmlDocument doc = new HtmlDocument();
                 doc.LoadHtml(client.DownloadString(url));

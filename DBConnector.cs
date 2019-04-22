@@ -71,8 +71,6 @@ namespace CustomSearch
         public void updateDataInDB(List<SearchResult> oldResults, List<SearchResult> newResults,
             TextBox textBox, CustomSearchDBDataSetTableAdapters.SearchResultsTableAdapter searchResultsTableAdapter, CustomSearchDBDataSet customSearchDBDataSet)
         {
-            
-            //Form1.textBoxVisible = true;
             if (oldResults.SequenceEqual(newResults))
             {
                 textBox.Text = "Данные не устарели";

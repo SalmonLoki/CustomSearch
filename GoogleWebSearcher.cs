@@ -3,27 +3,25 @@ using System.Linq;
 using Google.Apis.Customsearch.v1;
 using Google.Apis.Customsearch.v1.Data;
 using Google.Apis.Services;
-
+using System.Configuration;
 
 namespace CustomSearch
 {
     class GoogleWebSearcher : WebSearcher
     {
-        private string googleSubscriptionKey = System.Configuration.ConfigurationManager.AppSettings["googleSubscriptionKey"];
-        private string googleSearchEngineId = System.Configuration.ConfigurationManager.AppSettings["googleSearchEngineId"];
-        private string googleAppName = System.Configuration.ConfigurationManager.AppSettings["googleAppName"];
+        private string subscriptionKey = ConfigurationManager.AppSettings["googleSubscriptionKey"];
+        private string customSearchEngineID = ConfigurationManager.AppSettings["googleSearchEngineId"];
 
         public override List<SearchResult> Search(string keyword, int resultCount)
         {
             using (CustomsearchService Service = new CustomsearchService(
             new BaseClientService.Initializer
             {
-                ApplicationName = googleAppName,
-                ApiKey = googleSubscriptionKey,
+                ApiKey = subscriptionKey,
             }
             )) {
                 CseResource.ListRequest listRequest = Service.Cse.List(keyword);
-                listRequest.Cx = googleSearchEngineId;
+                listRequest.Cx = customSearchEngineID;
                 listRequest.Num = resultCount;
                 Search search = listRequest.Execute();
 
