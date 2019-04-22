@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data.SqlClient;
 using System.Windows.Forms;
+using System.Configuration;
 
 namespace CustomSearch
 {
     class DBConnector
     {
-        string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["CustomSearch.Properties.Settings.CustomSearchDBConnectionString"].ConnectionString;
+        string connectionString = ConfigurationManager.ConnectionStrings["CustomSearch.Properties.Settings.CustomSearchDBConnectionString"].ConnectionString;
 
 
         public List<SearchResult> getOldResultsFromDB()
