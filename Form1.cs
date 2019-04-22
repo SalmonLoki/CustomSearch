@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using System.Data.SqlClient;
 
 namespace CustomSearch
 {
@@ -10,11 +9,17 @@ namespace CustomSearch
     {
         HashSet<string> resultSet;
         List<SearchResult> newResultsList;
-        string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["CustomSearch.Properties.Settings.CustomSearchDBConnectionString"].ConnectionString;
+        DBConnector dbConnector = new DBConnector();
 
         public Form1()
         {
             InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            // TODO: данная строка кода позволяет загрузить данные в таблицу "customSearchDBDataSet.SearchResults". При необходимости она может быть перемещена или удалена.
+            this.searchResultsTableAdapter.Fill(this.customSearchDBDataSet.SearchResults);
         }
 
         private void SearchButton_Click(object sender, EventArgs e)
@@ -41,7 +46,7 @@ namespace CustomSearch
                     addToCommonResultlist(bingResults.ElementAt(i));
                 }
 
-                List<SearchResult> oldResults = getOldResultsFromDB();
+                List<SearchResult> oldResults = dbConnector.getOldResultsFromDB();
                 listBox1.DataSource = oldResults;
                 listBox1.DisplayMember = "Name";
                 listBox1.ValueMember = "Link";
@@ -50,7 +55,7 @@ namespace CustomSearch
                 ResultListBox.DisplayMember = "Name";
                 ResultListBox.ValueMember = "Link";
 
-                updateDataInDB(oldResults, newResultsList);
+                dbConnector.updateDataInDB(oldResults, newResultsList, this.textBox1, this.searchResultsTableAdapter, this.customSearchDBDataSet);
             }
             else
             {
@@ -58,7 +63,7 @@ namespace CustomSearch
             }
         }
 
-        void addToCommonResultlist(SearchResult result)
+        private void addToCommonResultlist(SearchResult result)
         {
             if (!resultSet.Contains(result.Link))
             {
@@ -67,76 +72,36 @@ namespace CustomSearch
             }
         }
 
-
-        private List<SearchResult> getOldResultsFromDB()
+        private void SearchOfflineButton_Click(object sender, EventArgs e)
         {
-            List<SearchResult> oldResults = new List<SearchResult>();
-
-            using (SqlConnection dbConnection = new SqlConnection(connectionString))
+            var keyword = SearchOfflineTextBox.Text;
+            if (!string.IsNullOrEmpty(keyword))
             {
-                dbConnection.Open();
-                string sqlQuery = "SELECT * FROM SearchResults";
-                using (SqlCommand command = new SqlCommand(sqlQuery, dbConnection))
-                {                   
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        if (reader != null)
-                        {
-                            while (reader.Read())
-                            {
-                                char[] charsToTrim = { ' ' };
-                                oldResults.Add(
-                                    new SearchResult(reader["url"].ToString().Trim(charsToTrim), reader["name"].ToString().Trim(charsToTrim))
-                                    );
-                            }
-                        }
-                    }
+                List<SearchResult> results = dbConnector.searchInDB(keyword);
+                if (results.Count == 0)
+                {
+                    label5.Text = "Nothing \n found";
                 }
-            }
-            return oldResults;
-        }
-
-        
-
-        private void updateDataInDB(List<SearchResult> oldResults, List<SearchResult> newResults)
-        {
-            if (oldResults.SequenceEqual(newResults))
-            {
-                textBox1.Text = "Данные не устарели";
+                else
+                {
+                    label5.Text = "";
+                }
+                listView1.Columns.Add("Link", -2, HorizontalAlignment.Left);
+                listView1.Columns.Add("Text", -2, HorizontalAlignment.Left);
+                listView1.Columns[0].Width = listView1.Width / 2;
+                listView1.Columns[1].Width = listView1.Width / 2;
+                listView1.Items.Clear();
+                foreach (SearchResult result in results)
+                {
+                    string[] row = { result.Name };
+                    listView1.Items.Add(result.Link).SubItems.AddRange(row);
+                }
             }
             else
             {
-                textBox1.Text = "Данные устарели...Обновление данных. ";
-
-                using (SqlConnection dbConnection = new SqlConnection(connectionString))
-                {
-                    dbConnection.Open();
-                    string sqlQuery = "TRUNCATE TABLE SearchResults";
-                    using (SqlCommand command = new SqlCommand(sqlQuery, dbConnection))
-                    {
-                        command.ExecuteNonQuery();
-                        this.searchResultsTableAdapter.Fill(this.customSearchDBDataSet.SearchResults);
-                    }
-
-                    foreach (SearchResult result in newResults)
-                    {
-                        string sqlQueryInsert = "INSERT INTO SearchResults (url, name) VALUES (@url, @name)";
-                        string url = result.Link.Substring(0, Math.Min(result.Link.Length, 500));
-                        string name = result.Name.Substring(0, Math.Min(result.Name.Length, 500));
-                        using (SqlCommand command = new SqlCommand(sqlQueryInsert, dbConnection))
-                        {
-                            command.Parameters.AddWithValue("@url", url);
-                            command.Parameters.AddWithValue("@name", name);
-                            command.ExecuteNonQuery();
-                            this.searchResultsTableAdapter.Fill(this.customSearchDBDataSet.SearchResults);
-                        }
-                    }
-                }
+                label5.Text = "Search query \n is empty";
             }
-
         }
-
-
 
 
         private void ResultListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -145,12 +110,14 @@ namespace CustomSearch
             if (!string.IsNullOrEmpty(link))
                 ResultWebBrowser.Navigate(link);
         }
+
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             var link = listBox1.SelectedValue.ToString();
             if (!string.IsNullOrEmpty(link))
                 ResultWebBrowser.Navigate(link);
         }
+
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listView1.SelectedIndices.Count > 0)
@@ -163,73 +130,6 @@ namespace CustomSearch
                         ResultWebBrowser.Navigate(link);
                 }                
             }
-        }
-
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            // TODO: данная строка кода позволяет загрузить данные в таблицу "customSearchDBDataSet.SearchResults". При необходимости она может быть перемещена или удалена.
-            this.searchResultsTableAdapter.Fill(this.customSearchDBDataSet.SearchResults);
-        }
-
-        private void SearchOfflineButton_Click(object sender, EventArgs e)
-        {
-            var keyword = SearchOfflineTextBox.Text;
-            if (!string.IsNullOrEmpty(keyword))
-            {
-                List<SearchResult> results = searchInDB(keyword);
-                if (results.Count == 0)
-                {
-                    label5.Text = "Nothing \n found";
-                }
-                else
-                {
-                    label5.Text = "";
-                }
-                listView1.Columns.Add("Link", -2, HorizontalAlignment.Left);
-                listView1.Columns.Add("Text", -2, HorizontalAlignment.Left);
-                listView1.Columns[0].Width = listView1.Width/2;
-                listView1.Columns[1].Width = listView1.Width / 2;
-                listView1.Items.Clear();
-                foreach (SearchResult result in results)
-                {
-                    string[] row = { result.Name };
-                    listView1.Items.Add(result.Link).SubItems.AddRange(row);                   
-                }
-            }
-            else
-            {
-                label5.Text = "Search query \n is empty";
-            }
-        }
-
-        private List<SearchResult> searchInDB(string keyword)
-        {
-            List<SearchResult> results = new List<SearchResult>();
-
-            using (SqlConnection dbConnection = new SqlConnection(connectionString))
-            {
-                dbConnection.Open();
-                string sqlQuery = "SELECT * FROM SearchResults WHERE name LIKE '%@key%' OR url LIKE concat('%', @key, '%')";
-                using (SqlCommand command = new SqlCommand(sqlQuery, dbConnection))
-                {
-                    command.Parameters.AddWithValue("@key", keyword);
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        if (reader != null)
-                        {
-                            while (reader.Read())
-                            {
-                                char[] charsToTrim = { ' ' };
-                                results.Add(
-                                    new SearchResult(reader["url"].ToString().Trim(charsToTrim), reader["name"].ToString().Trim(charsToTrim))
-                                    );
-                            }
-                        }
-                    }
-                }
-            }
-            return results;
-        }
+        }       
     }
 }
