@@ -38,7 +38,7 @@ namespace CustomSearch
 
                 foreach (IWebSearcher webSearcher in webSearchers)
                 {
-                    results.Add( webSearcher.Search(keyword, resultCount));
+                    results.Add( webSearcher.Search(keyword, resultCount).ToList());
                 }
                 foreach (List<SearchResult> list in results)
                     realCount = list != null ? (list.Count < realCount ? list.Count : realCount) : 0;

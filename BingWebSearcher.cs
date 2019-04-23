@@ -15,7 +15,7 @@ namespace CustomSearch
         private string customConfigurationID = ConfigurationManager.AppSettings["bingCustomConfig"];
         private string template = @"https://api.cognitive.microsoft.com/bingcustomsearch/v7.0/search?q={0}&customconfig={1}&count={2}&offset=0";
 
-        public List<SearchResult> Search(string keyword, int resultCount)
+        public SearchResult[] Search(string keyword, int resultCount)
         {
             string JsonString = null;
             string url = string.Format(template, keyword, customConfigurationID, resultCount);
@@ -30,7 +30,7 @@ namespace CustomSearch
             }
 
             Rootobject result = JsonConvert.DeserializeObject<Rootobject>(JsonString);
-            return result?.webPages.value.Select(item => new SearchResult(item.url, winToUtf(item.name))).ToList();
+            return result?.webPages.value.Select(item => new SearchResult(item.url, winToUtf(item.name))).ToArray();
         }
 
         private string winToUtf(string str)

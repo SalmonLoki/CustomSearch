@@ -12,7 +12,7 @@ namespace CustomSearch
         private string subscriptionKey = ConfigurationManager.AppSettings["googleSubscriptionKey"];
         private string customSearchEngineID = ConfigurationManager.AppSettings["googleSearchEngineId"];
 
-        public List<SearchResult> Search(string keyword, int resultCount)
+        public SearchResult[] Search(string keyword, int resultCount)
         {
             using (CustomsearchService Service = new CustomsearchService(
             new BaseClientService.Initializer
@@ -25,7 +25,7 @@ namespace CustomSearch
                 listRequest.Num = resultCount;
                 Search search = listRequest.Execute();
 
-                return search.Items?.Select(item => new SearchResult(item.Link, item.Title)).ToList();
+                return search.Items?.Select(item => new SearchResult(item.Link, item.Title)).ToArray();
             }               
         }
     }

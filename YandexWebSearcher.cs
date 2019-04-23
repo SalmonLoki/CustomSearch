@@ -13,7 +13,7 @@ namespace CustomSearch
         private string yandexLogin = ConfigurationManager.AppSettings["yandexUser"];
         private string template = @"https://yandex.com/search/xml?query={0}&l10n=en&user={1}&key={2}&count={3}";
 
-        public List<SearchResult> Search(string keyword, int resultCount)
+        public SearchResult[] Search(string keyword, int resultCount)
         {
             string completeUrl = string.Format(template, keyword, yandexLogin, subscriptionKey, resultCount);
 
@@ -22,17 +22,14 @@ namespace CustomSearch
             return xmlList(response);
         }
 
-        private List<SearchResult> xmlList(HttpWebResponse response)
+        private SearchResult[] xmlList(HttpWebResponse response)
         {
             XDocument xDoc = XDocument.Load(XmlReader.Create(response.GetResponseStream()));
 
-            IEnumerable<XElement> query = from c in xDoc.Descendants().Descendants("response").Descendants("results").Descendants("grouping").Descendants("group")
-                        select c;
+            IEnumerable<XElement> query = xDoc.Descendants().Descendants("response").Descendants("results").Descendants("grouping")
+                                          .Descendants("group").Descendants("doc");
 
-            List<SearchResult> result = new List<SearchResult>();
-            foreach (var item in query)
-                result.Add(new SearchResult(item.Element("doc").Element("url").Value, item.Element("doc").Element("title").Value));
-            return result;
+            return query.Select(u => new SearchResult(u.Element("url").Value, u.Element("title").Value)).ToArray();
         }
     }
 }

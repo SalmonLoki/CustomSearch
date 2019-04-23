@@ -4,6 +4,6 @@ namespace CustomSearch
 {
     interface IWebSearcher
     {
-        List<SearchResult> Search(string keyword, int resultCount);
+       SearchResult[] Search(string keyword, int resultCount);
     }
 }

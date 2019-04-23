@@ -1,4 +1,6 @@
-﻿namespace CustomSearch
+﻿using System;
+
+namespace CustomSearch
 {
     public class SearchResult : System.IEquatable<SearchResult>
     {
