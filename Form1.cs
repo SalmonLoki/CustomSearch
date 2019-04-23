@@ -26,24 +26,28 @@ namespace CustomSearch
         {
             var keyword = SearchOnlineTextBox.Text;
             var resultCount = 10;
+            var realCount = resultCount;
             resultSet = new HashSet<string>();
             newResultsList = new List<SearchResult>();
+            List<WebSearcher> webSearchers;
+            List<List<SearchResult>> results = new List<List<SearchResult>>();
 
             if (!string.IsNullOrEmpty(keyword))
-            {
-                BingWebSearcher bingSearcher = new BingWebSearcher();
-                GoogleWebSearcher googleSearcher = new GoogleWebSearcher();
-                YandexWebSearcher yandexSearcher = new YandexWebSearcher();
-                var bingResults = bingSearcher.Search(keyword, resultCount);
-                var googleResults = googleSearcher.Search(keyword, resultCount);
-                var yandexResults = yandexSearcher.Search(keyword, resultCount);
-                var newCount = Math.Min(bingResults.Count, Math.Min(googleResults.Count, yandexResults.Count));
+            {               
+                webSearchers = new List<WebSearcher>() { new BingWebSearcher(), new GoogleWebSearcher(), new YandexWebSearcher() };
 
-                for (int i = 0; i < newCount; i++)
+                foreach (WebSearcher webSearcher in webSearchers)
                 {
-                    addToCommonResultlist(yandexResults.ElementAt(i));
-                    addToCommonResultlist(googleResults.ElementAt(i));
-                    addToCommonResultlist(bingResults.ElementAt(i));
+                    results.Add( webSearcher.Search(keyword, resultCount));
+                }
+                foreach (List<SearchResult> list in results)
+                    realCount = list.Count < realCount ? list.Count : realCount;
+                for (int j = 0; j < realCount; j++)                    
+                {
+                    for (int i = 0; i < results.Count; i++)
+                    {
+                        addToCommonResultlist(results.ElementAt(i).ElementAt(j));
+                    }
                 }
 
                 List<SearchResult> oldResults = dbConnector.getOldResultsFromDB();
