@@ -21,8 +21,8 @@
                 this.Link.Equals(other.Link);
         }
 
-        public override bool Equals(object obj) => obj is SearchResult ? Equals(obj as SearchResult) : false;
-
+       // public override bool Equals(object obj) => obj is SearchResult ? Equals(obj as SearchResult) : false;
+        public override bool Equals(object obj) => Equals(obj as SearchResult);
         public override int GetHashCode() => (Link, Name).GetHashCode();
     }
 }

@@ -69,7 +69,7 @@ namespace CustomSearch
         }
 
         public void updateDataInDB(List<SearchResult> oldResults, List<SearchResult> newResults,
-            TextBox textBox, CustomSearchDBDataSetTableAdapters.SearchResultsTableAdapter searchResultsTableAdapter, CustomSearchDBDataSet customSearchDBDataSet)
+            TextBox textBox, CustomSearchDBDataSet1TableAdapters.SearchResultsTableAdapter searchResultsTableAdapter, CustomSearchDBDataSet1 customSearchDBDataSet)
         {
             if (oldResults.SequenceEqual(newResults))
             {
