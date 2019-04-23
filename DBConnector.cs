@@ -93,8 +93,8 @@ namespace CustomSearch
                     foreach (SearchResult result in newResults)
                     {
                         string sqlQueryInsert = "INSERT INTO SearchResults (url, name) VALUES (@url, @name)";
-                        string url = result.Link.Substring(0, Math.Min(result.Link.Length, 500));
-                        string name = result.Name.Substring(0, Math.Min(result.Name.Length, 500));
+                        string url = result.Link;
+                        string name = result.Name;
                         using (SqlCommand command = new SqlCommand(sqlQueryInsert, dbConnection))
                         {
                             command.Parameters.AddWithValue("@url", url);
