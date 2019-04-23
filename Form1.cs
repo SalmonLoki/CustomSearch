@@ -29,14 +29,14 @@ namespace CustomSearch
             var realCount = resultCount;
             resultSet = new HashSet<string>();
             newResultsList = new List<SearchResult>();
-            List<WebSearcher> webSearchers;
+            List<IWebSearcher> webSearchers;
             List<List<SearchResult>> results = new List<List<SearchResult>>();
 
             if (!string.IsNullOrEmpty(keyword))
             {               
-                webSearchers = new List<WebSearcher>() { new BingWebSearcher(), new GoogleWebSearcher(), new YandexWebSearcher() };
+                webSearchers = new List<IWebSearcher>() { new BingWebSearcher(), new GoogleWebSearcher(), new YandexWebSearcher() };
 
-                foreach (WebSearcher webSearcher in webSearchers)
+                foreach (IWebSearcher webSearcher in webSearchers)
                 {
                     results.Add( webSearcher.Search(keyword, resultCount));
                 }

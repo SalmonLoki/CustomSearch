@@ -7,13 +7,13 @@ using System.Configuration;
 
 namespace CustomSearch
 {
-    class YandexWebSearcher : WebSearcher
+    class YandexWebSearcher : IWebSearcher
     {
         private string subscriptionKey = ConfigurationManager.AppSettings["yandexSubscriptionKey"];
         private string yandexLogin = ConfigurationManager.AppSettings["yandexUser"];
         private string template = @"https://yandex.com/search/xml?query={0}&l10n=en&user={1}&key={2}&count={3}";
 
-        public override List<SearchResult> Search(string keyword, int resultCount)
+        public List<SearchResult> Search(string keyword, int resultCount)
         {
             string completeUrl = string.Format(template, keyword, yandexLogin, subscriptionKey, resultCount);
 
@@ -26,7 +26,7 @@ namespace CustomSearch
         {
             XDocument xDoc = XDocument.Load(XmlReader.Create(response.GetResponseStream()));
 
-            var query = from c in xDoc.Descendants().Descendants("response").Descendants("results").Descendants("grouping").Descendants("group")
+            IEnumerable<XElement> query = from c in xDoc.Descendants().Descendants("response").Descendants("results").Descendants("grouping").Descendants("group")
                         select c;
 
             List<SearchResult> result = new List<SearchResult>();
