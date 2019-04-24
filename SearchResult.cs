@@ -7,12 +7,6 @@ namespace CustomSearch
         public string Link { get; set; }
         public string Name { get; set; }
 
-        public SearchResult(string link, string name)
-        {
-            Link = link;
-            Name = name;
-        }
-
         public bool Equals(SearchResult other)
         {
             if (other is null)

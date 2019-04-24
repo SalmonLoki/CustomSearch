@@ -29,7 +29,7 @@ namespace CustomSearch
             IEnumerable<XElement> query = xDoc.Descendants().Descendants("response").Descendants("results").Descendants("grouping")
                                           .Descendants("group").Descendants("doc");
 
-            return query.Select(u => new SearchResult(u.Element("url").Value, u.Element("title").Value)).ToArray();
+            return query.Select(u => new SearchResult { Link = u.Element("url").Value, Name = u.Element("title").Value }).ToArray();
         }
     }
 }

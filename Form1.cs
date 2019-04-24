@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using System.Data.Entity;
 
 namespace CustomSearch
 {
@@ -29,7 +28,8 @@ namespace CustomSearch
             resultSet = new HashSet<string>();
             newResultsList = new List<SearchResult>();
             List<IWebSearcher> webSearchers;
-            List<List<SearchResult>> results = new List<List<SearchResult>>();
+            List<SearchResult[]> results = new List<SearchResult[]>();
+            SearchResult[] newResults;            
 
             if (!string.IsNullOrEmpty(keyword))
             {               
@@ -37,24 +37,27 @@ namespace CustomSearch
 
                 foreach (IWebSearcher webSearcher in webSearchers)
                 {
-                    results.Add( webSearcher.Search(keyword, resultCount).ToList());
+                    results.Add( webSearcher.Search(keyword, resultCount));
                 }
-                foreach (List<SearchResult> list in results)
-                    realCount = list != null ? (list.Count < realCount ? list.Count : realCount) : 0;
+                foreach (SearchResult[] array in results)
+                    realCount = array != null ? (array.Length < realCount ? array.Length : realCount) : 0;
+
+
                 for (int j = 0; j < realCount; j++)                    
                 {
                     for (int i = 0; i < results.Count; i++)
                     {
-                        addToCommonResultlist(results.ElementAt(i).ElementAt(j));
+                        addToCommonResultlist(results.ElementAt(i)[j]);
                     }
                 }
+                newResults = newResultsList.ToArray();
 
-                List<SearchResult> oldResults = dbConnector.getOldResultsFromDB().ToList();
+                SearchResult[] oldResults = dbConnector.getOldResultsFromDB();
 
                 displayInListBox(oldResults, listBox1);
-                displayInListBox(newResultsList, ResultListBox);
+                displayInListBox(newResults, ResultListBox);
 
-                dbConnector.updateDataInDB(oldResults, newResultsList, this.textBox1);
+                dbConnector.updateDataInDB(oldResults, newResults, this.textBox1);
             }
             else
             {
@@ -71,21 +74,21 @@ namespace CustomSearch
             }
         }
 
-        private void displayInListBox(List<SearchResult> list, ListBox box)
+        private void displayInListBox(SearchResult[] array, ListBox box)
         {         
-            box.DataSource = list;
+            box.DataSource = array;
             box.DisplayMember = "Name";
             box.ValueMember = "Link";
         }
 
-        private void displayInListView(List<SearchResult> list, ListView view)
+        private void displayInListView(SearchResult[] array, ListView view)
         {
             view.Columns.Add("Link", -2, HorizontalAlignment.Left);
             view.Columns.Add("Text", -2, HorizontalAlignment.Left);
             view.Columns[0].Width = listView1.Width / 2;
             view.Columns[1].Width = listView1.Width / 2;
             view.Items.Clear();
-            foreach (SearchResult result in list)
+            foreach (SearchResult result in array)
             {
                 string[] row = { result.Name };
                 view.Items.Add(result.Link).SubItems.AddRange(row);
@@ -97,8 +100,8 @@ namespace CustomSearch
             var keyword = SearchOfflineTextBox.Text;
             if (!string.IsNullOrEmpty(keyword))
             {
-                List<SearchResult> results = dbConnector.searchInDB(keyword).ToList();
-                label5.Text = results.Count == 0 ? "Nothing \n found" : "";
+                SearchResult[] results = dbConnector.searchInDB(keyword);
+                label5.Text = results.Length == 0 ? "Nothing \n found" : "";
                 displayInListView(results, listView1);
             }
             else

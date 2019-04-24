@@ -29,7 +29,7 @@ namespace CustomSearch
             }
 
             Rootobject result = JsonConvert.DeserializeObject<Rootobject>(JsonString);
-            return result?.webPages.value.Select(item => new SearchResult(item.url, winToUtf(item.name))).ToArray();
+            return result?.webPages.value.Select(item => new SearchResult { Link = item.url, Name = winToUtf(item.name) }).ToArray();
         }
 
         private string winToUtf(string str)

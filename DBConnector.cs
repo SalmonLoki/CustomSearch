@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -11,8 +10,12 @@ namespace CustomSearch
         {
             using (SearchContext searchContext = new SearchContext())
             {
-                IQueryable<Result> dbResults = searchContext.Results;
-                return dbResults.ToList().Select(u => new SearchResult(u.Link, u.Name)).ToArray();
+                return searchContext.Results
+                .Select(u => new SearchResult
+                {
+                    Link = u.Link,
+                    Name =u.Name
+                }).ToArray();
             }
         }
 
@@ -20,12 +23,17 @@ namespace CustomSearch
         {
             using (SearchContext searchContext = new SearchContext())
             {
-                IQueryable<Result> dbResults = searchContext.Results.Where(u => u.Link.Contains(keyword) | u.Name.Contains(keyword));
-                return dbResults.ToList().Select(u => new SearchResult(u.Link, u.Name)).ToArray();
+                return searchContext.Results
+                .Where(u => u.Link.Contains(keyword) | u.Name.Contains(keyword))
+                .Select(u => new SearchResult
+                {
+                    Link = u.Link,
+                    Name = u.Name
+                }).ToArray();
             }
         }
 
-        public void updateDataInDB(List<SearchResult> oldResults, List<SearchResult> newResults, TextBox textBox)
+        public void updateDataInDB(SearchResult[] oldResults, SearchResult[] newResults, TextBox textBox)
         {
             if (oldResults.SequenceEqual(newResults))
             {
@@ -40,6 +48,7 @@ namespace CustomSearch
                     searchContext.Database.ExecuteSqlCommand("TRUNCATE TABLE Results");
                     searchContext.SaveChanges();
 
+                    searchContext.Configuration.AutoDetectChangesEnabled = false;
                     foreach (SearchResult result in newResults)
                     {
                         searchContext.Results.Add(new Result
@@ -48,6 +57,7 @@ namespace CustomSearch
                             Name = result.Name
                         });
                     }
+                    searchContext.ChangeTracker.DetectChanges();
                     searchContext.SaveChanges();
                 }
             }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Google.Apis.Customsearch.v1;
 using Google.Apis.Customsearch.v1.Data;
 using Google.Apis.Services;
@@ -25,7 +24,7 @@ namespace CustomSearch
                 listRequest.Num = resultCount;
                 Search search = listRequest.Execute();
 
-                return search.Items?.Select(item => new SearchResult(item.Link, item.Title)).ToArray();
+                return search.Items?.Select(item => new SearchResult { Link = item.Link, Name = item.Title}).ToArray();
             }               
         }
     }
