@@ -50,13 +50,9 @@ namespace CustomSearch
                 }
 
                 List<SearchResult> oldResults = dbConnector.getOldResultsFromDB();
-                listBox1.DataSource = oldResults;
-                listBox1.DisplayMember = "Name";
-                listBox1.ValueMember = "Link";
 
-                ResultListBox.DataSource = newResultsList;
-                ResultListBox.DisplayMember = "Name";
-                ResultListBox.ValueMember = "Link";
+                displayInListBox(oldResults, listBox1);
+                displayInListBox(newResultsList, ResultListBox);
 
                 dbConnector.updateDataInDB(oldResults, newResultsList, this.textBox1);
             }
@@ -75,30 +71,35 @@ namespace CustomSearch
             }
         }
 
-        private void SearchOfflineButton_Click(object sender, EventArgs e)
+        private void displayInListBox(List<SearchResult> list, ListBox box)
+        {         
+            box.DataSource = list;
+            box.DisplayMember = "Name";
+            box.ValueMember = "Link";
+        }
+
+        private void displayInListView(List<SearchResult> list, ListView view)
+        {
+            view.Columns.Add("Link", -2, HorizontalAlignment.Left);
+            view.Columns.Add("Text", -2, HorizontalAlignment.Left);
+            view.Columns[0].Width = listView1.Width / 2;
+            view.Columns[1].Width = listView1.Width / 2;
+            view.Items.Clear();
+            foreach (SearchResult result in list)
+            {
+                string[] row = { result.Name };
+                view.Items.Add(result.Link).SubItems.AddRange(row);
+            }
+        }
+            
+    private void SearchOfflineButton_Click(object sender, EventArgs e)
         {
             var keyword = SearchOfflineTextBox.Text;
             if (!string.IsNullOrEmpty(keyword))
             {
                 List<SearchResult> results = dbConnector.searchInDB(keyword);
-                if (results.Count == 0)
-                {
-                    label5.Text = "Nothing \n found";
-                }
-                else
-                {
-                    label5.Text = "";
-                }
-                listView1.Columns.Add("Link", -2, HorizontalAlignment.Left);
-                listView1.Columns.Add("Text", -2, HorizontalAlignment.Left);
-                listView1.Columns[0].Width = listView1.Width / 2;
-                listView1.Columns[1].Width = listView1.Width / 2;
-                listView1.Items.Clear();
-                foreach (SearchResult result in results)
-                {
-                    string[] row = { result.Name };
-                    listView1.Items.Add(result.Link).SubItems.AddRange(row);
-                }
+                label5.Text = results.Count == 0 ? "Nothing \n found" : "";
+                displayInListView(results, listView1);
             }
             else
             {
