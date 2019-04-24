@@ -27,17 +27,18 @@ namespace CustomSearch
             var realCount = resultCount;
             resultSet = new HashSet<string>();
             newResultsList = new List<SearchResult>();
-            List<IWebSearcher> webSearchers;
-            List<SearchResult[]> results = new List<SearchResult[]>();
+            IWebSearcher[] webSearchers;
+            SearchResult[][] results;
             SearchResult[] newResults;            
 
             if (!string.IsNullOrEmpty(keyword))
             {               
-                webSearchers = new List<IWebSearcher>() { new BingWebSearcher(), new GoogleWebSearcher(), new YandexWebSearcher() };
+                webSearchers = new IWebSearcher[] { new BingWebSearcher(), new GoogleWebSearcher(), new YandexWebSearcher() };
 
-                foreach (IWebSearcher webSearcher in webSearchers)
+                results = new SearchResult[webSearchers.Length][];
+                for (int i = 0; i < webSearchers.Length; i++)
                 {
-                    results.Add( webSearcher.Search(keyword, resultCount));
+                    results[i] = webSearchers[i].Search(keyword, resultCount);
                 }
                 foreach (SearchResult[] array in results)
                     realCount = array != null ? (array.Length < realCount ? array.Length : realCount) : 0;
@@ -45,9 +46,9 @@ namespace CustomSearch
 
                 for (int j = 0; j < realCount; j++)                    
                 {
-                    for (int i = 0; i < results.Count; i++)
+                    for (int i = 0; i < webSearchers.Length; i++)
                     {
-                        addToCommonResultlist(results.ElementAt(i)[j]);
+                        addToCommonResultlist(results[i][j]);
                     }
                 }
                 newResults = newResultsList.ToArray();

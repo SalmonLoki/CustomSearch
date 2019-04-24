@@ -10,7 +10,7 @@ namespace CustomSearch
         {
             using (SearchContext searchContext = new SearchContext())
             {
-                return searchContext.Results
+                return searchContext.Results.AsNoTracking()
                 .Select(u => new SearchResult
                 {
                     Link = u.Link,
@@ -23,7 +23,7 @@ namespace CustomSearch
         {
             using (SearchContext searchContext = new SearchContext())
             {
-                return searchContext.Results
+                return searchContext.Results.AsNoTracking()
                 .Where(u => u.Link.Contains(keyword) | u.Name.Contains(keyword))
                 .Select(u => new SearchResult
                 {
