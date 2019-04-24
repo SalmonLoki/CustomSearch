@@ -1,75 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Data.SqlClient;
 using System.Windows.Forms;
-using System.Configuration;
 
 namespace CustomSearch
 {
     class DBConnector
     {
-        private string connectionString = ConfigurationManager.ConnectionStrings["CustomSearch.Properties.Settings.CustomSearchDBConnectionString"].ConnectionString;
-
         public List<SearchResult> getOldResultsFromDB()
         {
-            List<SearchResult> oldResults = new List<SearchResult>();
-
-            using (SqlConnection dbConnection = new SqlConnection(connectionString))
+            using (SearchContext searchContext = new SearchContext())
             {
-                dbConnection.Open();
-                string sqlQuery = "SELECT * FROM SearchResults";
-                using (SqlCommand command = new SqlCommand(sqlQuery, dbConnection))
-                {
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        if (reader != null)
-                        {
-                            while (reader.Read())
-                            {
-                                char[] charsToTrim = { ' ' };
-                                oldResults.Add(
-                                    new SearchResult(reader["url"].ToString().Trim(charsToTrim), reader["name"].ToString().Trim(charsToTrim))
-                                    );
-                            }
-                        }
-                    }
-                }
+                IQueryable<Result> dbResults = searchContext.Results;
+                return dbResults.ToList().Select(u => new SearchResult(u.Link, u.Name)).ToList();
             }
-            return oldResults;
         }
 
         public List<SearchResult> searchInDB(string keyword)
         {
-            List<SearchResult> results = new List<SearchResult>();
-
-            using (SqlConnection dbConnection = new SqlConnection(connectionString))
+            using (SearchContext searchContext = new SearchContext())
             {
-                dbConnection.Open();
-                string sqlQuery = "SELECT * FROM SearchResults WHERE name LIKE '%@key%' OR url LIKE concat('%', @key, '%')";
-                using (SqlCommand command = new SqlCommand(sqlQuery, dbConnection))
-                {
-                    command.Parameters.AddWithValue("@key", keyword);
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        if (reader != null)
-                        {
-                            while (reader.Read())
-                            {
-                                char[] charsToTrim = { ' ' };
-                                results.Add(
-                                    new SearchResult(reader["url"].ToString().Trim(charsToTrim), reader["name"].ToString().Trim(charsToTrim))
-                                    );
-                            }
-                        }
-                    }
-                }
+                IQueryable<Result> dbResults = searchContext.Results.Where(u => u.Link.Contains(keyword) | u.Name.Contains(keyword));
+                return dbResults.ToList().Select(u => new SearchResult(u.Link, u.Name)).ToList();
             }
-            return results;
         }
 
-        public void updateDataInDB(List<SearchResult> oldResults, List<SearchResult> newResults,
-            TextBox textBox, CustomSearchDBDataSet1TableAdapters.SearchResultsTableAdapter searchResultsTableAdapter, CustomSearchDBDataSet1 customSearchDBDataSet)
+        public void updateDataInDB(List<SearchResult> oldResults, List<SearchResult> newResults, TextBox textBox)
         {
             if (oldResults.SequenceEqual(newResults))
             {
@@ -79,30 +35,20 @@ namespace CustomSearch
             {
                 textBox.Text = "Данные устарели...Обновление данных. ";
 
-                using (SqlConnection dbConnection = new SqlConnection(connectionString))
+                using (SearchContext searchContext = new SearchContext())
                 {
-                    dbConnection.Open();
-                    string sqlQuery = "TRUNCATE TABLE SearchResults";
-                    using (SqlCommand command = new SqlCommand(sqlQuery, dbConnection))
-                    {
-                        command.ExecuteNonQuery();
-                        searchResultsTableAdapter.Fill(customSearchDBDataSet.SearchResults);
-
-                    }
+                    searchContext.Database.ExecuteSqlCommand("TRUNCATE TABLE Results");
+                    searchContext.SaveChanges();
 
                     foreach (SearchResult result in newResults)
                     {
-                        string sqlQueryInsert = "INSERT INTO SearchResults (url, name) VALUES (@url, @name)";
-                        string url = result.Link;
-                        string name = result.Name;
-                        using (SqlCommand command = new SqlCommand(sqlQueryInsert, dbConnection))
+                        searchContext.Results.Add(new Result
                         {
-                            command.Parameters.AddWithValue("@url", url);
-                            command.Parameters.AddWithValue("@name", name);
-                            command.ExecuteNonQuery();
-                            searchResultsTableAdapter.Fill(customSearchDBDataSet.SearchResults);
-                        }
+                            Link = result.Link,
+                            Name = result.Name
+                        });
                     }
+                    searchContext.SaveChanges();
                 }
             }
         }   

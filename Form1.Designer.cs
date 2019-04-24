@@ -38,7 +38,7 @@
             this.ResultListBox = new System.Windows.Forms.ListBox();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.ResultWebBrowser = new System.Windows.Forms.WebBrowser();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.searchResultsBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.searchResultsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.listView1 = new System.Windows.Forms.ListView();
@@ -46,19 +46,12 @@
             this.SearchOfflineButton = new System.Windows.Forms.Button();
             this.SearchOfflineTextBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.urlDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.customSearchDBDataSet1 = new CustomSearch.CustomSearchDBDataSet1();
-            this.searchResultsBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.searchResultsTableAdapter1 = new CustomSearch.CustomSearchDBDataSet1TableAdapters.SearchResultsTableAdapter();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.searchResultsBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.searchResultsBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.customSearchDBDataSet1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.searchResultsBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -163,28 +156,16 @@
             this.ResultWebBrowser.Size = new System.Drawing.Size(383, 170);
             this.ResultWebBrowser.TabIndex = 4;
             // 
-            // dataGridView1
+            // searchResultsBindingSource1
             // 
-            this.dataGridView1.AutoGenerateColumns = false;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.urlDataGridViewTextBoxColumn,
-            this.nameDataGridViewTextBoxColumn});
-            this.dataGridView1.DataSource = this.searchResultsBindingSource1;
-            this.dataGridView1.Location = new System.Drawing.Point(34, 131);
-            this.dataGridView1.Margin = new System.Windows.Forms.Padding(2);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(180, 103);
-            this.dataGridView1.TabIndex = 9;
-            this.dataGridView1.Visible = false;
+            this.searchResultsBindingSource1.DataMember = "SearchResults";
+            // 
+            // customSearchDBDataSet1
+
             // 
             // searchResultsBindingSource
             // 
             this.searchResultsBindingSource.DataMember = "SearchResults";
-            // 
-            // customSearchDBDataSet
-            // 
-            // searchResultsTableAdapter
             // 
             // splitContainer1
             // 
@@ -272,45 +253,21 @@
             this.label4.TabIndex = 0;
             this.label4.Text = "Search in\r\nsaved\r\nresults";
             // 
-            // urlDataGridViewTextBoxColumn
-            // 
-            this.urlDataGridViewTextBoxColumn.DataPropertyName = "url";
-            this.urlDataGridViewTextBoxColumn.HeaderText = "url";
-            this.urlDataGridViewTextBoxColumn.Name = "urlDataGridViewTextBoxColumn";
-            // 
-            // nameDataGridViewTextBoxColumn
-            // 
-            this.nameDataGridViewTextBoxColumn.DataPropertyName = "name";
-            this.nameDataGridViewTextBoxColumn.HeaderText = "name";
-            this.nameDataGridViewTextBoxColumn.Name = "nameDataGridViewTextBoxColumn";
-            // 
-            // customSearchDBDataSet1
-            // 
-            this.customSearchDBDataSet1.DataSetName = "CustomSearchDBDataSet1";
-            this.customSearchDBDataSet1.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
-            // 
-            // searchResultsBindingSource1
-            // 
-            this.searchResultsBindingSource1.DataMember = "SearchResults";
-            this.searchResultsBindingSource1.DataSource = this.customSearchDBDataSet1;
-            // 
             // searchResultsTableAdapter1
             // 
-            this.searchResultsTableAdapter1.ClearBeforeFill = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(858, 456);
-            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.SearchOnlineTextBox);
             this.Controls.Add(this.splitContainer1);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Search";
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.searchResultsBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.searchResultsBindingSource)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
@@ -318,8 +275,6 @@
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.customSearchDBDataSet1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.searchResultsBindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -336,7 +291,6 @@
         private System.Windows.Forms.ListBox ResultListBox;
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.WebBrowser ResultWebBrowser;
-        private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.BindingSource searchResultsBindingSource;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Label label4;
@@ -344,11 +298,7 @@
         private System.Windows.Forms.TextBox SearchOfflineTextBox;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ListView listView1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn urlDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
-        private CustomSearchDBDataSet1 customSearchDBDataSet1;
         private System.Windows.Forms.BindingSource searchResultsBindingSource1;
-        private CustomSearchDBDataSet1TableAdapters.SearchResultsTableAdapter searchResultsTableAdapter1;
     }
 }
 

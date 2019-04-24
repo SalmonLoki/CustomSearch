@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using System.Data.Entity;
 
 namespace CustomSearch
 {
@@ -18,8 +19,6 @@ namespace CustomSearch
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // TODO: данная строка кода позволяет загрузить данные в таблицу "customSearchDBDataSet1.SearchResults". При необходимости она может быть перемещена или удалена.
-            this.searchResultsTableAdapter1.Fill(this.customSearchDBDataSet1.SearchResults);
         }
 
         private void SearchButton_Click(object sender, EventArgs e)
@@ -59,7 +58,7 @@ namespace CustomSearch
                 ResultListBox.DisplayMember = "Name";
                 ResultListBox.ValueMember = "Link";
 
-                dbConnector.updateDataInDB(oldResults, newResultsList, this.textBox1, this.searchResultsTableAdapter1, this.customSearchDBDataSet1);
+                dbConnector.updateDataInDB(oldResults, newResultsList, this.textBox1);
             }
             else
             {
