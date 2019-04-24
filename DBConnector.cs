@@ -7,21 +7,21 @@ namespace CustomSearch
 {
     class DBConnector
     {
-        public List<SearchResult> getOldResultsFromDB()
+        public SearchResult[] getOldResultsFromDB()
         {
             using (SearchContext searchContext = new SearchContext())
             {
                 IQueryable<Result> dbResults = searchContext.Results;
-                return dbResults.ToList().Select(u => new SearchResult(u.Link, u.Name)).ToList();
+                return dbResults.ToList().Select(u => new SearchResult(u.Link, u.Name)).ToArray();
             }
         }
 
-        public List<SearchResult> searchInDB(string keyword)
+        public SearchResult[] searchInDB(string keyword)
         {
             using (SearchContext searchContext = new SearchContext())
             {
                 IQueryable<Result> dbResults = searchContext.Results.Where(u => u.Link.Contains(keyword) | u.Name.Contains(keyword));
-                return dbResults.ToList().Select(u => new SearchResult(u.Link, u.Name)).ToList();
+                return dbResults.ToList().Select(u => new SearchResult(u.Link, u.Name)).ToArray();
             }
         }
 

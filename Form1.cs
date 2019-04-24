@@ -49,7 +49,7 @@ namespace CustomSearch
                     }
                 }
 
-                List<SearchResult> oldResults = dbConnector.getOldResultsFromDB();
+                List<SearchResult> oldResults = dbConnector.getOldResultsFromDB().ToList();
 
                 displayInListBox(oldResults, listBox1);
                 displayInListBox(newResultsList, ResultListBox);
@@ -97,7 +97,7 @@ namespace CustomSearch
             var keyword = SearchOfflineTextBox.Text;
             if (!string.IsNullOrEmpty(keyword))
             {
-                List<SearchResult> results = dbConnector.searchInDB(keyword);
+                List<SearchResult> results = dbConnector.searchInDB(keyword).ToList();
                 label5.Text = results.Count == 0 ? "Nothing \n found" : "";
                 displayInListView(results, listView1);
             }
