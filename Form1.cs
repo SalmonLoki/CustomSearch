@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace CustomSearch
@@ -9,7 +8,7 @@ namespace CustomSearch
     {
         HashSet<string> resultSet;
         List<SearchResult> newResultsList;
-        DBConnector dbConnector = new DBConnector();
+        DBService dbConnector = new DBService();
 
         public Form1()
         {
@@ -58,7 +57,7 @@ namespace CustomSearch
                 displayInListBox(oldResults, listBox1);
                 displayInListBox(newResults, ResultListBox);
 
-                dbConnector.updateDataInDB(oldResults, newResults, this.textBox1);
+                textBox1.Text = dbConnector.updateDataInDB(oldResults, newResults);
             }
             else
             {

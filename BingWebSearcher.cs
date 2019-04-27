@@ -8,11 +8,11 @@ using System.Configuration;
 
 namespace CustomSearch
 {
-    class BingWebSearcher : IWebSearcher
+    public class BingWebSearcher : IWebSearcher
     {
-        private string subscriptionKey = ConfigurationManager.AppSettings["bingSubscriptionKey"];
-        private string customConfigurationID = ConfigurationManager.AppSettings["bingCustomConfig"];
-        private string template = @"https://api.cognitive.microsoft.com/bingcustomsearch/v7.0/search?q={0}&customconfig={1}&count={2}&offset=0";
+        private readonly string subscriptionKey = ConfigurationManager.AppSettings["bingSubscriptionKey"];
+        private readonly string customConfigurationID = ConfigurationManager.AppSettings["bingCustomConfig"];
+        private readonly string template = @"https://api.cognitive.microsoft.com/bingcustomsearch/v7.0/search?q={0}&customconfig={1}&count={2}&offset=0";
 
         public SearchResult[] Search(string keyword, int resultCount)
         {
@@ -29,10 +29,10 @@ namespace CustomSearch
             }
 
             Rootobject result = JsonConvert.DeserializeObject<Rootobject>(JsonString);
-            return result?.webPages.value.Select(item => new SearchResult { Link = item.url, Name = winToUtf(item.name) }).ToArray();
+            return result?.webPages.value.Select(item => new SearchResult { Link = item.url, Name = Win1251ToUTF8(item.name) }).ToArray();
         }
 
-        private string winToUtf(string str)
+        private string Win1251ToUTF8(string str)
         {
             byte[] winArr = Encoding.GetEncoding(1251).GetBytes(str);
             return Encoding.UTF8.GetString(winArr);
