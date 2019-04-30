@@ -9,7 +9,7 @@ namespace CustomSearch
     {
         public SearchResult[] getOldResultsFromDB(SearchContext searchContextArg = null)
         {
-            using (SearchContext searchContext = searchContextArg != null ? searchContextArg : new SearchContext())
+            using (SearchContext searchContext = searchContextArg ?? new SearchContext())
             {
                 return searchContext.Results
                 .AsNoTracking()
@@ -23,7 +23,7 @@ namespace CustomSearch
 
         public SearchResult[] searchInDB(string keyword, SearchContext searchContextArg = null)
         {
-            using (SearchContext searchContext = searchContextArg != null ? searchContextArg : new SearchContext())
+            using (SearchContext searchContext = searchContextArg ?? new SearchContext())
             {
                 if (keyword.Length == 0) {
                     throw new System.ArgumentNullException();
@@ -51,7 +51,7 @@ namespace CustomSearch
             {
                 textBoxText = "Данные устарели...Обновление данных. ";
 
-                using (SearchContext searchContext = searchContextArg != null ? searchContextArg : new SearchContext())
+                using (SearchContext searchContext = searchContextArg ?? new SearchContext())
                 {
                     searchContext.ExecuteSqlCommand("TRUNCATE TABLE Results");
                     searchContext.SaveChanges();

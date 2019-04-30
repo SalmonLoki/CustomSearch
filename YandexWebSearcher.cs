@@ -16,10 +16,12 @@ namespace CustomSearch
         public SearchResult[] Search(string keyword, int resultCount)
         {
             string completeUrl = string.Format(template, keyword, yandexLogin, subscriptionKey, resultCount);
-
+            
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(completeUrl);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            return xmlList(response);
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            {
+                return xmlList(response);
+            }           
         }
 
         private SearchResult[] xmlList(HttpWebResponse response)

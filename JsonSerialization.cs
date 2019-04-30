@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CustomSearch
 {
-    public class Rootobject
+    public class RootObject
     {
         public string _type { get; set; }
         public Webpages webPages { get; set; }
